@@ -18,11 +18,19 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
-
-static int is_batch_mode = false;
+#include "utils.h"
 
 void init_regex();
 void init_wp_pool();
+
+/** NUME command */
+static int cmd_help(char *args);
+static int cmd_c(char *args);
+// static int cmd_si(char *args);
+// static int cmd_info(char *args);
+static int cmd_q();
+
+static int is_batch_mode = false;
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
@@ -49,6 +57,7 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  NEMUTRAP(0, 0);
   return -1;
 }
 

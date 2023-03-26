@@ -19,6 +19,7 @@
 #include <readline/history.h>
 #include "sdb.h"
 #include "utils.h"
+#include "debug.h"
 
 void init_regex();
 void init_wp_pool();
@@ -28,7 +29,7 @@ static int cmd_help(char *args);
 static int cmd_c(char *args);
 // static int cmd_si(char *args);
 // static int cmd_info(char *args);
-static int cmd_q();
+static int cmd_q(char *args);
 
 static int is_batch_mode = false;
 
@@ -50,29 +51,52 @@ static char* rl_gets() {
   return line_read;
 }
 
+static int cmd_si(char *args) {
+  char *arg = strtok(NULL, " ");
+  int step;
+
+  if (args == NULL)
+  {
+    step = 0;
+  }
+  else
+  {
+    step = stoi(arg);
+  }
+
+  if (step >= 0)
+  {
+    cpu_exec(step);
+  }
+  else 
+  {
+    Log("Wrong paramter %s", arg);
+  }
+ 
+  return 0;
+}
+
 static int cmd_c(char *args) {
   cpu_exec(-1);
   return 0;
 }
-
 
 static int cmd_q(char *args) {
   NEMUTRAP(0, 0);
   return -1;
 }
 
-static int cmd_help(char *args);
-
 static struct {
   const char *name;
   const char *description;
-  int (*handler) (char *);
-} cmd_table [] = {
-  { "help", "Display information about all supported commands", cmd_help },
-  { "c", "Continue the execution of the program", cmd_c },
-  { "q", "Exit NEMU", cmd_q },
+  int (*handler)(char *);
+} cmd_table[] = {
+    {"help", "Display information about all supported commands", cmd_help},
+    {"c", "Continue the execution of the program", cmd_c},
+    {"si", "One step execution of the program", cmd_si},
+    {"q", "Exit NEMU", cmd_q},
 
-  /* TODO: Add more commands */
+    /* TODO: Add more commands */
 
 };
 
